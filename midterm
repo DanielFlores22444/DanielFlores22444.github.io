@@ -1,0 +1,210 @@
+import matplotlib.pyplot as plt
+import random
+
+# ---------------------------------
+# Self-Driving Braking Car Project
+# ---------------------------------
+
+# Stores all of our test data
+data = [
+    [10, 4.80, 1],
+    [20, 4.35, 0],
+    [30, 3.95, 0],
+    [40, 3.50, 0],
+    [50, 3.20, 0],
+    [60, 2.85, 0],
+    [70, 2.50, 0],
+    [80, 2.15, 0],
+    [90, 1.85, 0],
+    [100, 1.55, 0]
+]
+
+# ---------------------------------
+# Collect data
+# ---------------------------------
+def collect_data():
+    print("\n--- Collect Sensor Data ---")
+
+    while True:
+        distance = float(input("How far is the object in cm? "))
+        voltage = float(input("What is the sensor voltage? "))
+
+        # Decide when the car should brake
+        if distance <= 10:
+            braking = 1
+            print("BRAKE!")
+        else:
+            braking = 0
+            print("Keep driving.")
+
+        test_data = [distance, voltage, braking]
+        data.append(test_data)
+
+        choice = input("Do you want to enter another test? yes/no: ")
+
+        if choice == "no":
+            break
+
+
+# ---------------------------------
+# Run an automatic test
+# ---------------------------------
+def automatic_test():
+    print("\n--- Automatic Car Test ---")
+
+    while True:
+        # Simulates a sensor reading
+        distance = random.uniform(1, 20)
+        voltage = random.uniform(0, 5)
+
+        print("Distance:", distance, "cm")
+        print("Voltage:", voltage, "V")
+
+        if distance <= 10:
+            braking = 1
+            print("BRAKE!")
+        else:
+            braking = 0
+            print("Keep driving.")
+
+        test_data = [distance, voltage, braking]
+        data.append(test_data)
+
+        choice = input("Run another automatic test? yes/no: ")
+
+        if choice == "no":
+            break
+
+
+# ---------------------------------
+# View all collected data
+# ---------------------------------
+def view_data():
+    print("\n--- Sensor Data ---")
+
+    if len(data) == 0:
+        print("There is no data yet.")
+    else:
+        for test_data in data:
+            print(
+                "Distance:",
+                test_data[0],
+                "cm | Voltage:",
+                test_data[1],
+                "V | Braking:",
+                test_data[2]
+                )
+
+
+# ---------------------------------
+# Analyze the data
+# ---------------------------------
+def analyze_data():
+    print("\n--- Analyze Braking Data ---")
+
+    if len(data) == 0:
+        print("There is no data to analyze.")
+    else:
+        total_tests = 0
+        total_braking = 0
+
+        for test_data in data:
+            total_tests = total_tests + 1
+
+            if test_data[2] == 1:
+                total_braking = total_braking + 1
+
+        print("Total tests:", total_tests)
+        print("Number of braking events:", total_braking)
+
+        braking_percent = (total_braking / total_tests) * 100
+
+        print("Braking percentage:", braking_percent, "%")
+
+
+# ---------------------------------
+# Save data to a file
+# ---------------------------------
+def save_data():
+    print("\n--- Saving Data ---")
+
+    file = open("car_data.txt", "w")
+    file.write("Distance,Voltage,Braking\n")
+    for test_data in data:
+        file.write(
+            str(test_data[0]) + "," +
+            str(test_data[1]) + "," +
+            str(test_data[2]) + "\n"
+        )
+
+    file.close()
+
+    print("Data saved to car_data.txt")
+
+
+# ---------------------------------
+# Make a graph
+# ---------------------------------
+def graph_data():
+    print("\n--- Creating Graph ---")
+
+    if len(data) == 0:
+        print("There is no data to graph.")
+    else:
+        distances = []
+        voltages = []
+
+        for test_data in data:
+            distances.append(test_data[0])
+            voltages.append(test_data[1])
+
+        plt.plot(distances, voltages, marker="o")
+        plt.xlabel("Distance (cm)")
+        plt.ylabel("Sensor Voltage (V)")
+        plt.title("Distance vs Sensor Voltage")
+        plt.show()
+
+
+# ---------------------------------
+# Main program
+# ---------------------------------
+while True:
+
+    print("\n==============================")
+    print("Self-Driving Braking Car")
+    print("==============================")
+    print("1. Enter sensor data")
+    print("2. Run automatic test")
+    print("3. View data")
+    print("4. Analyze data")
+    print("5. Create graph")
+    print("6. Exit")
+
+    choice = input("Choose an option: ")
+
+    if choice == "1":
+        choice = input("Would you want to enter new data or see existing data?")
+        if choice == "new data":
+            collect_data()
+        elif choice == "existing data":
+            print("Here is the existing data!")
+            with open("car_data.txt", "r") as file:
+                print(file.read())
+    elif choice == "2":
+        automatic_test()
+
+    elif choice == "3":
+        view_data()
+
+    elif choice == "4":
+        analyze_data()
+
+    elif choice == "5":
+        graph_data()
+
+    elif choice == "6":
+        print("Program ended.")
+        break
+
+    else:
+        print("Invalid choice. Try again.")
